@@ -30,6 +30,6 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           script: |
             docker pull josh23jp/flask-cicd-app:latest
-            docker ps -q --filter "publish=80" | xargs -r docker stop
-            docker ps -a -q --filter "publish=80" | xargs -r docker rm
+            docker stop flask-app || true
+            docker rm flask-app || true
             docker run -d -p 80:5000 --name flask-app josh23jp/flask-cicd-app:latest
