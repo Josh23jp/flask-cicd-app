@@ -1,4 +1,4 @@
-name: Build and Push Docker Image
+name: Build and Deploy Docker App
 
 on:
   push:
@@ -11,7 +11,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Build Docker image
         run: docker build -t josh23jp/flask-cicd-app:latest .
@@ -30,6 +30,6 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           script: |
             docker pull josh23jp/flask-cicd-app:latest
-            docker stop flask-app || true
-            docker rm flask-app || true
+            docker ps -q --filter "publish=80" | xargs -r docker stop
+            docker ps -a -q --filter "publish=80" | xargs -r docker rm
             docker run -d -p 80:5000 --name flask-app josh23jp/flask-cicd-app:latest
